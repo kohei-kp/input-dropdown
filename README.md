@@ -2,7 +2,6 @@
 
 ### Installation ###
 テキストボックスにドロップダウンをつける。
-[Sample](https://jsfiddle.net/kohei_mizobata/mzantv30/122/)
 
 ### Usage ###
 
