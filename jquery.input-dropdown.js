@@ -1,7 +1,26 @@
 ;(function($) {
-  $.fn.inputDropdown = function(data, options) {
+  $.fn.inputDropdown = function(arg1) {
+    const methodArgs = Array.prototype.slice.call(arguments, 1)
+
+    return this.each(function() {
+      const instance = $(this).data('input-dropdown')
+
+      if (instance && arg1 in instance && arg1.charAt(0) !== '_') {
+        instance[arg1].apply(instance, methodArgs)
+      } else if (typeof arg1 === 'object' || !arg1) {
+        $(this).data('input-dropdown', new $.inputDropdown(this, arg1))
+      } else {
+        console.error('Does not exist on jQuery.inputDropdown.')
+      }
+    })
+  }
+
+  $.inputDropdown = function(targetElm, options) {
+    this.elm = targetElm
+
     const settings = $.extend(
       {
+        data: [],
         formatter: undefined,
         valueKey: 'data-value',
         maxHeight: '250px',
@@ -11,12 +30,13 @@
       },
       options
     )
+    this.settings = settings
 
-    const targetId = this[0].id
-    const targetPosition = this.offset()
+    const targetId = targetElm.id
+    const targetPosition = $(targetElm).offset()
     const style = `
       position: absolute;
-      top: ${targetPosition.top + this.height() + 7}px;
+      top: ${targetPosition.top + $(targetElm).height() + 7}px;
       left: ${targetPosition.left}px;
       overflow-y: scroll;
       max-height: ${settings.maxHeight};
@@ -25,15 +45,15 @@
       background: ${settings.background};
     `
     const ulElm = `<ul id="jq-input-dropdown_${targetId}" class="jq-input-dropdown" style="${style}">`
-    const listElm = data.map(row => settings.formatter(row))
+    const listElm = settings.data.map(row => settings.formatter(row))
     $('body').append($(ulElm).append(listElm))
 
     const $inputDropdown = $(`#jq-input-dropdown_${targetId}`)
 
-    this.on('click', e => $inputDropdown.show())
+    $(targetElm).on('click', e => $inputDropdown.show())
 
     $inputDropdown.on('click', 'li', e => {
-      this.val($(e.target).attr(settings.valueKey))
+      $(targetElm).val($(e.target).attr(settings.valueKey))
       $inputDropdown.hide()
     })
 
@@ -43,4 +63,13 @@
       }
     })
   }
+
+  $.extend($.inputDropdown.prototype, {
+    update(data) {
+      const $inputDropdown = $(`#jq-input-dropdown_${this.elm.id}`)
+      this.settings.data = data
+      $inputDropdown.children('li').remove()
+      $inputDropdown.append(this.settings.data.map(row => this.settings.formatter(row)))
+    }
+  })
 })(jQuery)
