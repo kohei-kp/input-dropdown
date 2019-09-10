@@ -1,7 +1,5 @@
 # jquery.input-dropdown
 
-===
-Summary
 ### Installation ###
 テキストボックスにドロップダウンをつける。
 [Sample](https://jsfiddle.net/kohei_mizobata/mzantv30/122/)
@@ -18,7 +16,8 @@ const userList = [
     { name: 'Mallory', age: 25 }
 ]
 
-$('#input-sample').inputDropdown(userList, {
+$('#input-sample').inputDropdown({
+  data: userList,
   formatter: user => {
     return `<li username=${user.name}>$user.name}(${user.age})</li>`
   },
@@ -30,6 +29,9 @@ $('#input-sample').inputDropdown(userList, {
 * formatter: function
 * valueKey: 取得するデータのキー
 * maxHeight: ドロップダウンの高さ
+* color: テキストの色
+* fontSize: フォントサイズ
+* background: 背景色
 
 ### License ###  
 MIT
