@@ -50,10 +50,16 @@
 
     const $inputDropdown = $(`#jq-input-dropdown_${targetId}`)
 
-    $(targetElm).on('click', e => $inputDropdown.show())
+    $(targetElm).on('click', e => {
+      if (this.settings.data.length === 0) return
+      const top = $(e.target).offset().top + $(e.target).height() + 7
+      $inputDropdown.css('top', top + 'px')
+      $inputDropdown.show()
+    })
 
     $inputDropdown.on('click', 'li', e => {
       $(targetElm).val($(e.target).attr(settings.valueKey))
+      $(targetElm).trigger('change')
       $inputDropdown.hide()
     })
 
